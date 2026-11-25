@@ -1,0 +1,10 @@
+newmtl nero
+Kd 0.08 0.08 0.08
+Ka 0 0 0
+d 1
+
+newmtl bianco
+Kd 0.95 0.95 0.95
+Ka 0 0 0
+d 1
+
