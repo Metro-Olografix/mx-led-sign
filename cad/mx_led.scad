@@ -12,7 +12,7 @@
 //  lastra. Svitate quelle, la lastra si sfila e si puo' cambiare la striscia.
 //  La striscia LED corre nella gola sul fianco del corpo, su tutto il contorno.
 //  Il diffusore e' stampato insieme alla lastra (multicolore: piastra nera +
-//  parte bianca con parete del diffusore, labbro anteriore e pioli, cosi' il
+//  parte bianca con parete del diffusore e labbro anteriore, cosi' il
 //  colore cambia una volta sola): chiudendo la lastra la parete scende nella
 //  gola davanti alla striscia, dietro al labbro del corpo.
 //  Il controller sta fuori dal logo: il cavo scende dall'alto ed entra da una
@@ -147,8 +147,8 @@ module core_all() difference() {
     for (p = plate_pegs) translate([p[0], p[1], g1 - peg_h - 0.5]) cylinder(d = peg_d + press_fit, h = peg_h + 1);
 }
 
-// lastra nera: solo la piastra. Labbro e pioli sono nella parte bianca (vedi
-// plate_white_all), cosi' sopra la piastra si stampa un colore solo.
+// lastra nera: solo la piastra, con i fori per le spine. Il labbro e' nella parte
+// bianca (vedi plate_white_all), cosi' sopra la piastra si stampa un colore solo.
 module plate_all() difference() {
     translate([0, 0, g1]) linear_extrude(front_wall) logo2d();
     // fori per le spine di centraggio (la spina si incolla qui)

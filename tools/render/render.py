@@ -42,9 +42,11 @@ print('f=%.0f  camera (mm, sistema logo):'%f, C.round(0))
 def proj(X):
     X=np.atleast_2d(X); q=(K@(R@X.T+t[:,None])).T; return q[:,:2]/q[:,2:]
 
-# ---- geometria (mm): retro a 10 dal muro, fronte a 34
+# ---- geometria (mm): retro a 10 dal muro (standoff), fronte a 34 (T = 24)
+# di fianco si vedono: corpo nero fino al labbro posteriore (standoff + g0 + lip_t),
+# parete del diffusore e labbro anteriore bianchi fino a g1, poi la lastra nera
 Z_BACK, Z_FRONT = 10.0*k, 34.0*k
-BANDS=[(10.0*k,18.25*k,'k'),(18.25*k,29.15*k,'w'),(29.15*k,34.0*k,'k')]   # nero / diffusore / nero
+BANDS=[(10.0*k,18.2*k,'k'),(18.2*k,30.0*k,'w'),(30.0*k,34.0*k,'k')]   # nero / diffusore / nero
 area=sum(P[i,0]*P[(i+1)%n,1]-P[(i+1)%n,0]*P[i,1] for i in range(n))/2
 sg=1 if area>0 else -1
 seglen=np.linalg.norm(np.roll(P,-1,0)-P,axis=1); cum=np.r_[0,np.cumsum(seglen)]; per=cum[-1]
@@ -164,8 +166,8 @@ def render(mode):
                 col=tuple(wall[py,px]*(0.62+0.38*sky)*np.array([1.0,1.0,1.03]))
             else:
                 hue=(cum[i]/per)%1.0
-                # punti morbidi: 75 LED lungo il perimetro
-                ph=(cum[i]/per*75)%1.0; dot=0.55+0.45*math.cos(math.pi*ph)**4
+                # punti morbidi: 65 LED lungo il perimetro (logo da 260 mm)
+                ph=(cum[i]/per*65)%1.0; dot=0.55+0.45*math.cos(math.pi*ph)**4
                 col=tuple(np.array(colorsys.hsv_to_rgb(hue,0.55,1.0))*255*dot)
         dr.polygon(tocanvas(q),fill=tuple(int(max(0,min(255,c))) for c in col)+(255,))
     # faccia frontale (nero opaco, leggero gradiente di luce dall'alto)
