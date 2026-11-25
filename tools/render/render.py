@@ -1,13 +1,15 @@
-import re, json, math, sys, colorsys, numpy as np
+import os, re, json, math, sys, colorsys, numpy as np
 from PIL import Image, ImageDraw, ImageFilter
-IMG='/home/mic/Downloads/Gemini_Generated_Image_mb4jtwmb4jtwmb4j.jpg'
+# Fotoinserimento del logo sul muro, di giorno e di sera. Uso: python3 render.py [cartella_uscita]
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))
+IMG=os.path.join(HERE,'foto_muro.jpg')
 OUT=sys.argv[1] if len(sys.argv)>1 else '.'
-src=open('/home/mic/Documents/michelangelo/cad/mx_led/logo_pts.scad').read()
+src=open(os.path.join(ROOT,'cad','logo_pts.scad')).read()
 Wl=float(re.search(r'LOGO_W = ([\d.]+)',src).group(1)); S=300/Wl
 P=np.array([(float(a)*S,float(b)*S) for a,b in re.findall(r'\[(-?[\d.]+),(-?[\d.]+)\]', src.split('LOGO_PTS')[1])])
 n=len(P)
 photo=Image.open(IMG).convert('RGB'); IW,IH=photo.size
-H=np.array(json.load(open('H.json')))
+H=np.array(json.load(open(os.path.join(HERE,'H.json'))))
 
 # ---- scala e posizione reali dalle due viti nel muro (interasse 238 mm)
 Hi=np.linalg.inv(H)

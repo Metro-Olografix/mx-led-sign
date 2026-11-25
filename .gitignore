@@ -3,3 +3,7 @@ __pycache__/
 .venv/
 *.swp
 *~
+
+# uscite di make render e di fit.py: in docs/ vanno solo le immagini scelte
+tools/render/out/
+tools/render/fit_check.png

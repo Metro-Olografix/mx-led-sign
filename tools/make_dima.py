@@ -3,10 +3,13 @@
 
 Disegna il contorno del logo largo 260 mm, le due viti esistenti (interasse
 238 mm), la posizione della tacca per il cavo e una barra di 100 mm per
-verificare che la stampa sia in scala. Genera dima_viti.svg e dima_viti.pdf.
-Uso: python3 make_dima.py   (il PDF richiede Pillow)
+verificare che la stampa sia in scala. Genera export/dima/dima_viti.svg e .pdf.
+Uso: make dima   (il PDF richiede Pillow)
 """
-import re
+import os, re
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT_DIR = os.path.join(ROOT, 'export', 'dima')
 
 LOGO_W_MM = 260.0
 SCREWS = [(10.75, 89.75), (248.75, 89.75)]
@@ -14,7 +17,7 @@ FEED_X = 100 * LOGO_W_MM / 300
 PAGE_W, PAGE_H = 420.0, 297.0
 OX, OY_TOP = (PAGE_W - LOGO_W_MM) / 2, 60.0     # angolo in alto a sinistra del logo
 
-src = open('logo_pts.scad').read()
+src = open(os.path.join(ROOT, 'cad', 'logo_pts.scad')).read()
 W = float(re.search(r'LOGO_W = ([\d.]+)', src).group(1))
 HL = float(re.search(r'LOGO_H = ([\d.]+)', src).group(1))
 s = LOGO_W_MM / W
@@ -56,7 +59,7 @@ def svg():
     for i, t in enumerate(TEXT):
         o.append(f'<text x="20" y="{14 + i*6.5}" font-size="4.5" font-family="sans-serif">{t}</text>')
     o.append('</svg>')
-    open('dima_viti.svg', 'w').write('\n'.join(o))
+    open(os.path.join(OUT_DIR, 'dima_viti.svg'), 'w').write('\n'.join(o))
 
 def pdf():
     from PIL import Image, ImageDraw, ImageFont
@@ -88,7 +91,7 @@ def pdf():
     d.text(P(bx, by+6), '100 mm', fill='black', font=f)
     for i, t in enumerate(TEXT):
         d.text(P(20, 10 + i*6.5), t, fill='black', font=f)
-    im.save('dima_viti.pdf', resolution=dpi)
+    im.save(os.path.join(OUT_DIR, 'dima_viti.pdf'), resolution=dpi)
 
 svg()
 try:

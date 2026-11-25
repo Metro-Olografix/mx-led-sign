@@ -2,16 +2,18 @@
 """Unisce gli STL delle due lastre frontali del logo MX in un unico OBJ colorato.
 
 Dispone su un piatto da 256 x 256: lastra destra e lastra sinistra (nero + parete
-bianca del diffusore, stesse coordinate). I tappini si stampano a parte (stl/mx_cap.stl). Ogni parte e' un oggetto
+bianca del diffusore, stesse coordinate). I tappini si stampano a parte (export/stl/mx_cap.stl). Ogni parte e' un oggetto
 separato con il suo materiale (file .mtl) e anche il colore sui vertici, cosi'
 Orca puo' proporre l'abbinamento ai filamenti anche senza il .mtl.
 Scrive anche un OBJ per ciascuna lastra (mx_lastra_destra.obj, mx_lastra_sinistra.obj).
-Uso: python3 make_obj.py   (dalla cartella mx_led, dopo aver esportato gli STL)
+Legge export/stl/, scrive in export/obj/. Uso: make obj
 """
 import os
 
-STL = 'stl'
-OUT = 'mx_lastre_diffusore.obj'
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STL = os.path.join(ROOT, 'export', 'stl')
+OUT_DIR = os.path.join(ROOT, 'export', 'obj')
+OUT = os.path.join(OUT_DIR, 'mx_lastre_diffusore.obj')
 GAP = 4.0
 COLORS = {'nero': (0.08, 0.08, 0.08), 'bianco': (0.95, 0.95, 0.95)}
 
@@ -76,9 +78,9 @@ def write_obj(out, names, placement):
             vbase += len(verts)
             maxx = max(maxx, max(v[0] for v in verts)); maxy = max(maxy, max(v[1] for v in verts))
     open(out, 'w').write('\n'.join(lines) + '\n')
-    print(f'{out}: ingombro sul piatto {maxx:.0f} x {maxy:.0f} mm (piatto 256 x 256)')
+    print(f'{os.path.relpath(out, ROOT)}: ingombro sul piatto {maxx:.0f} x {maxy:.0f} mm (piatto 256 x 256)')
 
 # tutte e due le lastre su un piatto, e un file per ciascuna lastra (stesso .mtl)
 write_obj(OUT, [g for g, _ in groups], place)
 for g, _ in groups:
-    write_obj(f'mx_{g}.obj', [g], {g: (GAP, GAP)})
+    write_obj(os.path.join(OUT_DIR, f'mx_{g}.obj'), [g], {g: (GAP, GAP)})

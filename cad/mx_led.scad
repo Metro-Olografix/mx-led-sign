@@ -29,7 +29,8 @@
 //  Ogni parte esportata e' gia' orientata per la stampa. Le parti "_white"
 //  hanno le stesse coordinate della lastra nera (vedi make_obj.py).
 //
-//  Export:  openscad -D 'part="plate_right"' -o plate_right.stl mx_led.scad
+//  Export:  make stl  (dalla radice del repo), oppure a mano:
+//           openscad -D 'part="plate_right"' -o plate_right.stl mx_led.scad
 // ============================================================================
 
 include <logo_pts.scad>

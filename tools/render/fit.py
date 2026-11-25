@@ -1,7 +1,9 @@
-import re, json, numpy as np
+import os, re, json, numpy as np
 from PIL import Image, ImageDraw
-IMG='/home/mic/Downloads/Gemini_Generated_Image_mb4jtwmb4jtwmb4j.jpg'
-src=open('/home/mic/Documents/michelangelo/cad/mx_led/logo_pts.scad').read()
+# Trova l'omografia tra il piano del logo e la foto del muro (scrive H.json).
+HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(os.path.dirname(HERE))
+IMG=os.path.join(HERE,'foto_muro.jpg')
+src=open(os.path.join(ROOT,'cad','logo_pts.scad')).read()
 W=float(re.search(r'LOGO_W = ([\d.]+)',src).group(1)); S=300/W
 P=np.array([(float(a)*S,float(b)*S) for a,b in re.findall(r'\[(-?[\d.]+),(-?[\d.]+)\]', src.split('LOGO_PTS')[1])])
 im=np.asarray(Image.open(IMG).convert('RGB')).astype(float)
@@ -51,8 +53,8 @@ v,c=nm(cost,v0,steps)
 v,c=nm(cost,v,np.abs(v)*0.005+1e-7)
 print('IoU finale',1-c)
 H=np.append(v,1).reshape(3,3)
-json.dump(H.tolist(),open('H.json','w'))
+json.dump(H.tolist(),open(os.path.join(HERE,'H.json'),'w'))
 # overlay di controllo
 o=Image.open(IMG).convert('RGB'); d=ImageDraw.Draw(o)
 d.line([tuple(p) for p in proj(H,P)]+[tuple(proj(H,P)[0])],fill=(255,0,0),width=3)
-o.crop((200,1250,1150,2150)).save('fit_check.png')
+o.crop((200,1250,1150,2150)).save(os.path.join(HERE,'fit_check.png'))
