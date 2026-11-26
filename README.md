@@ -41,9 +41,9 @@ Per montare l'insegna, oltre ai pezzi stampati, serve questo:
 
 ```
 cad/        mx_led.scad (il modello), logo_pts.scad (contorno del logo, generato), MX_black.svg (logo di partenza)
-export/     file pronti: stl/ per i pezzi, obj/ per le lastre multicolore, dima/ per la dima delle viti
-slicer/     preset di processo OrcaSlicer usato per le lastre
-tools/      script Python che generano logo_pts.scad, gli OBJ, la dima e i render
+export/     file pronti: stl/ per i pezzi, obj/ e 3mf/ per le lastre multicolore, dima/ per la dima delle viti
+slicer/     preset di processo OrcaSlicer delle lastre e impostazioni complete usate per il progetto .3mf
+tools/      script Python che generano logo_pts.scad, gli OBJ, il progetto .3mf, la dima e i render
 docs/       immagini usate in questo README
 ```
 
@@ -60,9 +60,13 @@ La stampante è una Elegoo Centauri Carbon 2 con piatto da 256 × 256 mm, lo sli
 | `mx_spacers.stl` | i 7 distanziali |
 | `mx_test_core.stl`, `mx_test_plate*.stl` | pezzo di prova: la fine della gamba sinistra della M, con un foro vite e una spina |
 
-Per le lastre conviene caricare gli OBJ in `export/obj/` invece degli STL. `mx_lastre_diffusore.obj` mette entrambe le lastre sullo stesso piatto, mentre `mx_lastra_destra.obj` e `mx_lastra_sinistra.obj` ne contengono una ciascuno. In tutti e tre la parte nera e quella bianca sono oggetti separati, e il colore è indicato sia nel file `.mtl` sia sui vertici, così OrcaSlicer può proporre da solo l'abbinamento con i filamenti.
+Per le lastre il file da usare è `export/3mf/mx_lastre.3mf`, un progetto OrcaSlicer già pronto: le due lastre sono sullo stesso piatto, ogni lastra ha la parte nera sul filamento 4 e quella bianca sul 3, e le impostazioni sono quelle del preset qui sotto. Conviene stampare sempre le due lastre insieme. Nero e bianco convivono per cinque layer, dove la parete bianca entra per 1 mm nella piastra nera, e ognuno di quei layer costa un cambio filamento da 3–4 minuti. Sullo stesso piatto i cambi cadono alla stessa quota e si pagano una volta sola.
 
-Il preset `slicer/MX logo lastre @Elegoo CC2 0.4.json` parte dal profilo 0.20mm Standard della CC2 e aggiunge 4 pareti con generatore arachne, 5 strati pieni sopra e sotto, gyroid al 25%, la parete esterna a 60 mm/s e la prime tower. Per usarlo va copiato nella cartella `user/default/process/` della configurazione di OrcaSlicer.
+Nel progetto c'è anche un modificatore di altezza che, da 5 mm fino alla cima, stampa la parete esterna a 200 mm/s invece che a 60. Lassù c'è solo la parete bianca del diffusore: è larga due linee, OrcaSlicer le tratta entrambe come parete esterna, e resta nascosta nella gola. Sotto i 5 mm, cioè fronte e bordo neri, incastro e labbro bianco, non cambia niente. Secondo la stima di Orca le due lastre passano da 2 h 11 min a 1 h 49 min. Abbassare l'incastro ridurrebbe i cambi colore, ma l'incastro da 1 mm serve a tenere salda la parete bianca nella piastra e va lasciato così.
+
+In alternativa ci sono gli OBJ in `export/obj/`, senza modificatore. `mx_lastre_diffusore.obj` mette entrambe le lastre sullo stesso piatto, mentre `mx_lastra_destra.obj` e `mx_lastra_sinistra.obj` ne contengono una ciascuno. In tutti e tre la parte nera e quella bianca sono oggetti separati, e il colore è indicato sia nel file `.mtl` sia sui vertici, così OrcaSlicer può proporre da solo l'abbinamento con i filamenti.
+
+Il preset `slicer/MX logo lastre @Elegoo CC2 0.4.json` parte dal profilo 0.20mm Standard della CC2 e aggiunge 4 pareti con generatore arachne, 5 strati pieni sopra e sotto, gyroid al 25%, la parete esterna a 60 mm/s e la prime tower. Per usarlo in altri progetti va copiato nella cartella `user/default/process/` della configurazione di OrcaSlicer. `slicer/orca_project_settings.json` contiene invece tutte le impostazioni risolte (stampante, filamenti e processo) da cui `make 3mf` costruisce il progetto. I filamenti sono PLA Elegoo, quelli della stampa di prova: per le lastre definitive in ASA vanno cambiati in OrcaSlicer dopo aver aperto il progetto.
 
 ## Montaggio
 
@@ -80,6 +84,7 @@ Servono OpenSCAD (il progetto usa la 2021.01) e Python 3. La dima PDF e i render
 make stl                            tutti gli STL
 make export/stl/mx_plate_left.stl   un pezzo solo
 make obj                            gli OBJ multicolore delle lastre
+make 3mf                            il progetto OrcaSlicer delle lastre
 make dima                           la dima A3 delle viti
 make logo                           rigenera cad/logo_pts.scad da cad/MX_black.svg
 make render                         i fotoinserimenti, in tools/render/out/
